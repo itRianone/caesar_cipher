@@ -2,64 +2,70 @@ import PySimpleGUI as sg
 
 encrypt_text = [
     [sg.Image(r'C:\Users\user1\Desktop\MyScripts\PythonScripts\gui\Julius_Caesar.png',
-                  background_color='black')],
-        [sg.Text('Input text what encrypt', 
-                  background_color='yellow', text_color='black')],
-        [sg.Input(size=(19, 1), key='-INPUT-',
-                  background_color='black', text_color='yellow')],
-        [sg.Text('encrypt text: ', size=(19, 6), key='-OUTPUT-',
-                  background_color='black', text_color='yellow')],
-        [sg.Button('translate', button_color=('black', 'yellow'))]
-    ]
+              background_color='black')],
+    [sg.Text('Input text what encrypt', 
+              background_color='yellow', text_color='black')],
+    [sg.Input(size=(19, 1), key='INPUT_TEXT_ENCRYPT',
+              background_color='black', text_color='yellow')],
+    [sg.Text('Input shift value >0,<40',
+              background_color='yellow', text_color='black')],
+    [sg.Input(size=(19, 1), key='INPUT_SHIFT_VALUE',
+              background_color='black', text_color='yellow')],
+    [sg.Text('encrypt text: ', size=(19, 6), key='OUTPUT',
+              background_color='black', text_color='yellow')],
+    [sg.Button('translate', key='TRANSLATE_ENCRYPT', button_color=('black', 'yellow'))]
+]
 
 decrypt_text = [
     [sg.Image(r'C:\Users\user1\Desktop\MyScripts\PythonScripts\gui\Julius_Caesar2.png',
               background_color='black')],
     [sg.Text('Input text what decrypt',
               background_color='yellow', text_color='black')],
-    [sg.Input(size=(19, 1), key='-INPUT2-',
+    [sg.Input(size=(19, 1), key='INPUT_TEXT_DECRYPT',
               background_color='black', text_color='yellow')],
-    [sg.Text('decrypt text: ', size=(19, 6), key='-OUTPUT2-',
+    [sg.Text('Input shift value           ',
+              background_color='yellow', text_color='black')],
+    [sg.Input(size=(19, 1), key='INPUT_SHIFT_VALUE2',
               background_color='black', text_color='yellow')],
-    [sg.Button('translate', button_color=('black', 'yellow'))]
+    [sg.Text('decrypt text: ', size=(19, 6), key='OUTPUT2',
+              background_color='black', text_color='yellow')],
+    [sg.Button('translate', key='TRANSLATE_DECRYPT', button_color=('black', 'yellow'))]
 ]
-
-#bye = [sg.Button('bye', button_color=('black', 'yellow'))]
 
 layout = [
     [sg.Column(encrypt_text, background_color='black'),
     sg.VSeperator(),
     sg.Column(decrypt_text, background_color='black')]
-    #sg.VSeperator(),
-    #sg.Column(bye, background_color='black')]
 ]
 
-def encrypt_caesar(plaintext):
+def encrypt_caesar(plaintext, shift):
     ciphertext = []
-    for s in (plaintext):
-        symb_code = ord(s)
-        symb_code += 3
-        ciphertext.append(chr(symb_code))
+    if int(shift) > 0 and int(shift) <= 5:
+        for s in plaintext:
+            symb_code = ord(s)
+            symb_code += int(shift)
+            ciphertext.append(chr(symb_code))
 
-    window['-OUTPUT-'].update('encrypt text: ' +
+    window['OUTPUT'].update('encrypt text: ' +
                               ''.join(ciphertext), text_color='yellow')
 
 
-def decrypt_caesar(ciphertext):
+def decrypt_caesar(ciphertext, shift):
     decrypttext = []
-    for s in ciphertext:
-      symb_code = ord(s)
-      symb_code -= 3
-      decrypttext.append(chr(symb_code))
+    if int(shift) > 0 and int(shift)<=5:
+        for s in ciphertext:
+            symb_code = ord(s)
+            symb_code -= int(shift)
+            decrypttext.append(chr(symb_code))
 
-    window['-OUTPUT2-'].update('decrypt text: ' +
+    window['OUTPUT2'].update('decrypt text: ' +
                                ''.join(decrypttext), text_color='yellow')
 
 #sg.theme('black')
-window = sg.Window('Gaius Julius Caesar,'
-                   ' immortal Dictator of the Roman Republic', 
+window = sg.Window('Gaius Julius Caesar, '
+                   'immortal Dictator of the Roman Republic', 
                    layout=layout, background_color='black',
-                   size=(450, 450))
+                   size=(450, 490))
 
 
 while True:
@@ -67,8 +73,10 @@ while True:
     if event == sg.WINDOW_CLOSED or event == 'bye':
         break
     try:
-        encrypt_caesar(values['-INPUT-'])
-        decrypt_caesar(values['-INPUT2-'])
+        if event == 'TRANSLATE_ENCRYPT' and values['INPUT_TEXT_ENCRYPT'] and values['INPUT_SHIFT_VALUE']:
+            encrypt_caesar(values['INPUT_TEXT_ENCRYPT'], values['INPUT_SHIFT_VALUE'])
+        else:
+            decrypt_caesar(values['INPUT_TEXT_DECRYPT'], values['INPUT_SHIFT_VALUE2'])
     except TypeError:
         continue
 
